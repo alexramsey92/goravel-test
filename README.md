@@ -4,6 +4,8 @@ A SaaS scaffold built with [Goravel](https://goravel.dev) — a Go framework tha
 
 **Stack:** Go · Goravel · SQLite · Tailwind CSS (CDN) · JWT
 
+**[Live demo page →](https://alexramsey92.github.io/goravel-test/)**
+
 ---
 
 ## What's included
