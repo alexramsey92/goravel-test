@@ -1,0 +1,60 @@
+{{define "auth/register.tmpl"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — GoravelTest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">GoravelTest</h1>
+      <p class="text-gray-500 mt-1">Create your account</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+      {{if .error}}
+      <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+        {{.error}}
+      </div>
+      {{end}}
+
+      <form method="POST" action="/register" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <input type="text" name="name" required autofocus
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="Your name">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input type="email" name="email" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="you@example.com">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input type="password" name="password" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="••••••••">
+        </div>
+
+        <button type="submit"
+          class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+          Create account
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-gray-500 mt-6">
+        Already have an account?
+        <a href="/login" class="text-indigo-600 hover:underline font-medium">Sign in</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+{{end}}
