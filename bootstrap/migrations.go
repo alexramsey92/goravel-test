@@ -12,5 +12,6 @@ func Migrations() []schema.Migration {
 		&migrations.M20260315000001CreateUsersTable{},
 		&migrations.M20260315000002CreateClientsTable{},
 		&migrations.M20260315000003CreatePagesTable{},
+		&migrations.M20260315000004AddSlugToClientsTable{},
 	}
 }

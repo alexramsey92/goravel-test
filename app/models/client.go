@@ -12,6 +12,7 @@ const (
 type Client struct {
 	orm.Model
 	Name    string `gorm:"column:name;not null"`
+	Slug    string `gorm:"column:slug;uniqueIndex"`
 	Email   string `gorm:"column:email;not null"`
 	Phone   string `gorm:"column:phone"`
 	Company string `gorm:"column:company"`

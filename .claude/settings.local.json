@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/alexr/Documents/GitHub/garden-app/internal/web/handlers/**)",
+      "Read(//c/Users/alexr/Documents/GitHub/smbgen/routes/**)",
+      "Read(//c/Users/alexr/Documents/GitHub/smbgen/routes//**)",
+      "Read(//c/Users/alexr/Documents/GitHub/smbgen/app/Models/**)",
+      "Read(//c/Users/alexr/Documents/GitHub/smbgen/config//**)",
+      "Read(//c/Users/alexr/Documents/GitHub/smbgen/app/Services/**)",
+      "Read(//c/Users/alexr/Documents/GitHub/garden-app/cmd/**)",
+      "Read(//c/Users/alexr/Documents/GitHub/smbgen/**)",
+      "Read(//c/Users/alexr/go/pkg/mod/github.com/goravel/gin@v1.17.0/**)"
+    ]
+  }
+}

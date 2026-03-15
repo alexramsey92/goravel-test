@@ -1,6 +1,10 @@
 package controllers
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/goravel/framework/contracts/http"
 
 	"goravel/app/facades"
@@ -11,6 +15,32 @@ type ClientController struct{}
 
 func NewClientController() *ClientController {
 	return &ClientController{}
+}
+
+// slugify converts a string to a URL-safe slug.
+func slugify(s string) string {
+	s = strings.ToLower(s)
+	s = regexp.MustCompile(`[^a-z0-9\s-]`).ReplaceAllString(s, "")
+	s = regexp.MustCompile(`[\s-]+`).ReplaceAllString(s, "-")
+	s = strings.Trim(s, "-")
+	return s
+}
+
+// uniqueSlug ensures the slug is unique in the clients table, appending -2, -3 etc. if needed.
+// Pass excludeID > 0 to ignore the current record (used on updates).
+func uniqueSlug(base string, excludeID uint) string {
+	candidate := base
+	for i := 2; ; i++ {
+		q := facades.Orm().Query().Model(&models.Client{}).Where("slug", candidate)
+		if excludeID > 0 {
+			q = q.Where("id != ?", excludeID)
+		}
+		count, _ := q.Count()
+		if count == 0 {
+			return candidate
+		}
+		candidate = fmt.Sprintf("%s-%d", base, i)
+	}
 }
 
 // Index GET /clients
@@ -41,8 +71,17 @@ func (c *ClientController) Create(ctx http.Context) http.Response {
 
 // Store POST /clients
 func (c *ClientController) Store(ctx http.Context) http.Response {
+	name := ctx.Request().Input("name")
+
+	rawSlug := ctx.Request().Input("slug")
+	if rawSlug == "" {
+		rawSlug = name
+	}
+	slug := uniqueSlug(slugify(rawSlug), 0)
+
 	client := models.Client{
-		Name:    ctx.Request().Input("name"),
+		Name:    name,
+		Slug:    slug,
 		Email:   ctx.Request().Input("email"),
 		Phone:   ctx.Request().Input("phone"),
 		Company: ctx.Request().Input("company"),
@@ -67,9 +106,9 @@ func (c *ClientController) Show(ctx http.Context) http.Response {
 	var user models.User
 	_ = facades.Auth(ctx).User(&user)
 
-	id := ctx.Request().Route("id")
+	slug := ctx.Request().Route("id")
 	var client models.Client
-	if err := facades.Orm().Query().Find(&client, id); err != nil || client.ID == 0 {
+	if err := facades.Orm().Query().Where("slug", slug).First(&client); err != nil || client.ID == 0 {
 		return ctx.Response().Redirect(302, "/clients")
 	}
 
@@ -82,9 +121,9 @@ func (c *ClientController) Show(ctx http.Context) http.Response {
 
 // Update POST /clients/:id/update
 func (c *ClientController) Update(ctx http.Context) http.Response {
-	id := ctx.Request().Route("id")
+	slug := ctx.Request().Route("id")
 	var client models.Client
-	if err := facades.Orm().Query().Find(&client, id); err != nil || client.ID == 0 {
+	if err := facades.Orm().Query().Where("slug", slug).First(&client); err != nil || client.ID == 0 {
 		return ctx.Response().Redirect(302, "/clients")
 	}
 
@@ -97,14 +136,14 @@ func (c *ClientController) Update(ctx http.Context) http.Response {
 
 	facades.Orm().Query().Save(&client)
 
-	return ctx.Response().Redirect(302, "/clients/"+id)
+	return ctx.Response().Redirect(302, "/clients/"+slug)
 }
 
 // Destroy POST /clients/:id/delete
 func (c *ClientController) Destroy(ctx http.Context) http.Response {
-	id := ctx.Request().Route("id")
+	slug := ctx.Request().Route("id")
 	var client models.Client
-	if err := facades.Orm().Query().Find(&client, id); err == nil && client.ID != 0 {
+	if err := facades.Orm().Query().Where("slug", slug).First(&client); err == nil && client.ID != 0 {
 		facades.Orm().Query().Delete(&client)
 	}
 	return ctx.Response().Redirect(302, "/clients")
